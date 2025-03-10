@@ -6,6 +6,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { auth } from '../(auth)/auth';
 import Script from 'next/script';
 import { PanelProvider } from '@/hooks/use-panel';
+import { ContentSidebar } from '@/components/content-sidebar';
 
 export const experimental_ppr = true;
 
@@ -27,6 +28,7 @@ export default async function Layout({
         <SidebarProvider defaultOpen={!isCollapsed}>
           <AppSidebar user={session?.user} />
           <SidebarInset>{children}</SidebarInset>
+          <ContentSidebar />
         </SidebarProvider>
       </PanelProvider>
     </>

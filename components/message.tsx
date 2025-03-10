@@ -169,7 +169,9 @@ const PurePreviewMessage = ({
                             isReadonly={isReadonly}
                           />
                         ) : toolName === 'moleculeVisualizer' ? (
-                          <Button disabled={isOpen} onClick={() => {
+                          <Button key={`panel-btn-${toolCallId}`} disabled={isOpen} onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
                             setIsOpen(true);
                             setSmiles(result.smiles);
                           }}>Show Visualization</Button>

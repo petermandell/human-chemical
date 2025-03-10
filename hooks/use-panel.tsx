@@ -10,25 +10,15 @@ const PanelContext = createContext({
 });
 
 export const PanelProvider = ({ children }: { children: React.ReactNode }) => {
-  const [_isOpen, _setIsOpen] = useState(false);
-  const [_smiles, _setSmiles] = useState("");
-
-  const setIsOpen = (val: boolean) => {
-    _setIsOpen(val);
-  };
-
-  const setSmiles = (val: string) => {
-    _setSmiles(val);
-  };
-
-  console.log({ _smiles });
+  const [isOpen, setIsOpen] = useState(false);
+  const [smiles, setSmiles] = useState("");
 
   return (
     <PanelContext.Provider
       value={{
-        isOpen: _isOpen,
+        isOpen,
         setIsOpen,
-        smiles: _smiles,
+        smiles,
         setSmiles,
       }}
     >
