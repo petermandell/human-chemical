@@ -63,7 +63,7 @@ export const ContentSidebar = () => {
               <SmilesSvgRenderer height={200} width={200} smiles={smiles} />
             </p>
             <p className="text-md text-center">Predicted Toxicity</p>
-            <table className="text-left divide-y divide-gray-200 table-fixed dark:divide-gray-700">
+            <table className="text-left divide-y divide-gray-200 table-fixed dark:divide-gray-700 mb-12">
               <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
                   <th className="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
