@@ -1,18 +1,20 @@
-'use client';
+"use client";
 
-import type { Attachment, Message } from 'ai';
-import { useChat } from '@ai-sdk/react';
-import { useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
-import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
-import { Artifact } from './artifact';
-import { MultimodalInput } from './multimodal-input';
-import { Messages } from './messages';
-import { VisibilityType } from './visibility-selector';
-import { useArtifactSelector } from '@/hooks/use-artifact';
-import { toast } from 'sonner';
+import { tool, type Attachment, type Message } from "ai";
+import { useChat } from "@ai-sdk/react";
+import { useEffect, useMemo, useState } from "react";
+import useSWR, { useSWRConfig } from "swr";
+import { ChatHeader } from "@/components/chat-header";
+import type { Vote } from "@/lib/db/schema";
+import { fetcher, generateUUID } from "@/lib/utils";
+import { Artifact } from "./artifact";
+import { MultimodalInput } from "./multimodal-input";
+import { Messages } from "./messages";
+import { VisibilityType } from "./visibility-selector";
+import { useArtifactSelector } from "@/hooks/use-artifact";
+import { toast } from "sonner";
+import { ContentSidebar } from "./content-sidebar";
+import { usePanel } from "@/hooks/use-panel";
 
 export function Chat({
   id,
@@ -28,6 +30,8 @@ export function Chat({
   isReadonly: boolean;
 }) {
   const { mutate } = useSWRConfig();
+  const { setIsOpen, setSmiles } = usePanel();
+  const [currentToolCallId, setCurrentToolCallId] = useState<string>("");
 
   const {
     messages,
@@ -47,23 +51,50 @@ export function Chat({
     sendExtraMessageFields: true,
     generateId: generateUUID,
     onFinish: () => {
-      mutate('/api/history');
+      mutate("/api/history");
     },
     onError: () => {
-      toast.error('An error occured, please try again!');
+      toast.error("An error occured, please try again!");
+    },
+    onToolCall: ({ toolCall }) => {
+      if (toolCall.toolName === "moleculeVisualizer") {
+        setIsOpen(true);
+        setCurrentToolCallId(toolCall.toolCallId);
+        console.log(toolCall);
+        return toolCall;
+      }
     },
   });
 
   const { data: votes } = useSWR<Array<Vote>>(
     `/api/vote?chatId=${id}`,
-    fetcher,
+    fetcher
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
+  useEffect(() => {
+    if (currentToolCallId) {
+      messages.forEach((message) => {
+        const toolInvs: any[] = message.parts.filter((part) => {
+          return part.type === "tool-invocation";
+        });
+
+        toolInvs.some((toolInv) => {
+          if (toolInv.toolInvocation.toolCallId === currentToolCallId) {
+            if (toolInv.toolInvocation.result) {
+              setSmiles(toolInv.toolInvocation.result.smiles);
+            }
+          }
+        });
+      });
+    }
+  }, [currentToolCallId, messages, setSmiles]);
+
   return (
     <>
+      <ContentSidebar />
       <div className="flex flex-col min-w-0 h-dvh bg-background">
         <ChatHeader
           chatId={id}

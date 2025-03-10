@@ -3,7 +3,7 @@
 import type { ChatRequestOptions, Message } from 'ai';
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import { memo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import type { Vote } from '@/lib/db/schema';
 import { DocumentToolCall, DocumentToolResult } from './document';
 import { PencilEditIcon, SparklesIcon } from './icons';
@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
 import { MessageReasoning } from './message-reasoning';
+import { usePanel } from '@/hooks/use-panel';
 
 const PurePreviewMessage = ({
   chatId,
@@ -43,6 +44,7 @@ const PurePreviewMessage = ({
   index: number;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
+  const { setIsOpen, isOpen, setSmiles } = usePanel();
 
   return (
     <AnimatePresence>
@@ -140,7 +142,7 @@ const PurePreviewMessage = ({
             {message.toolInvocations && message.toolInvocations.length > 0 && (
               <div className="flex flex-col gap-4">
                 {message.toolInvocations.map((toolInvocation) => {
-                  const { toolName, toolCallId, state, args } = toolInvocation;
+                  const { toolName, toolCallId, state, args, } = toolInvocation;
 
                   if (state === 'result') {
                     const { result } = toolInvocation;
@@ -166,6 +168,11 @@ const PurePreviewMessage = ({
                             result={result}
                             isReadonly={isReadonly}
                           />
+                        ) : toolName === 'moleculeVisualizer' ? (
+                          <Button disabled={isOpen} onClick={() => {
+                            setIsOpen(true);
+                            setSmiles(result.smiles);
+                          }}>Show Visualization</Button>
                         ) : (
                           <pre>{JSON.stringify(result, null, 2)}</pre>
                         )}
