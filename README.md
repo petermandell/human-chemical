@@ -1,13 +1,11 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Next.js AI Chatbot</h1>
-</a>
+# Peter Mandell  - Human Chemical
 
-<p align="center">
-  An Open-Source AI Chatbot Template Built With Next.js and the AI SDK by Vercel.
-</p>
+## Overview
 
-<p align="center">
-  <strong>Peter Mandell's Take Home Assignment</strong>
-</p>
-<br/>
+I added a custom tool within the ai-sdk framework to drive the sidebar functionality. Chats that mention visualizing a SMILES string trigger the *onTool* callback for *useChat*.
+
+## Considerations
+
+I spent a significant portion of this project familiarizing myself with the project structure, particularly [ai-sdk](https://sdk.vercel.ai/docs/introduction). I have never worked with it before, so it required a good amount of research. It is an awesome library that provides a ton of useful functionality that would be a pain to implement from scratch.
+
+I quickly hit the rate limit for the Open AI API during my testing. I added $5 to my account to get around it.
